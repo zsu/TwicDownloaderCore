@@ -1,8 +1,7 @@
 {
   "profiles": {
     "TwicDownloader": {
-      "commandName": "Project",
-      "commandLineArgs": "1290 1296"
+      "commandName": "Project"
     }
   }
 }

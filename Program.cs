@@ -17,22 +17,50 @@ namespace TwicDownloader
         private static IConfiguration _configuration;
         static void Main(string[] args)
         {
+            string last, fromNumber, toNumber = null;
+            string lastFilePath = Path.Combine(Directory.GetCurrentDirectory(), "last.txt");
             _logger = LogManager.GetCurrentClassLogger();
             if (args.Length < 2)
             {
-                Console.WriteLine("Usage: TwicDownloader fromNumber toNumber");
-                return;
+                if (File.Exists(lastFilePath))
+                {
+                    using (StreamReader sr = new StreamReader(lastFilePath))
+                    {
+                        last = sr.ReadToEnd();
+                    }
+                    fromNumber = GetNextSequenceNumber(last);
+                }
+                else
+                {
+                    Console.WriteLine("Usage: dotnet TwicDownloader.dll fromNumber toNumber");
+                    return;
+                }
+            }
+            else
+            {
+                fromNumber = args[0];
+                toNumber = args[1];
             }
             var tempFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             try
             {
                 _configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
                 Directory.CreateDirectory(tempFolder);
-                var task = Download(_configuration["Url"], Convert.ToInt32(args[0]), Convert.ToInt32(args[1]), tempFolder);
+                var task = Download(_configuration["Url"], fromNumber, toNumber, tempFolder);
                 task.Wait();
-                Unzip(Convert.ToInt32(args[0]), Convert.ToInt32(args[1]), tempFolder);
-                CombineFiles(Convert.ToInt32(args[0]), Convert.ToInt32(args[1]), tempFolder);
-                _logger.Info($"Download files from {args[0]} to {args[1]} successfully.");
+                toNumber = task.Result;
+                if (!string.IsNullOrWhiteSpace(toNumber) && Convert.ToInt32(toNumber) >= Convert.ToInt32(fromNumber))
+                {
+                    Unzip(Convert.ToInt32(fromNumber), Convert.ToInt32(toNumber), tempFolder);
+                    CombineFiles(Convert.ToInt32(fromNumber), Convert.ToInt32(toNumber), tempFolder);
+                    using (StreamWriter outputFile = new StreamWriter(lastFilePath, false))
+                    {
+                        outputFile.WriteLine(toNumber);
+                    }
+                    _logger.Info($"Download files from {fromNumber} to {toNumber} successfully.");
+                }
+                else
+                    _logger.Info($"No file was downloaded.");
             }
             catch (Exception ex)
             {
@@ -47,8 +75,9 @@ namespace TwicDownloader
                 }
             }
         }
-        static async Task Download(string url, int fromNumber, int toNumber, string folder)
+        static async Task<string> Download(string url, string fromNumber, string toNumber, string folder)
         {
+            string lastDownloadNumber = null;
             var filePattern = _configuration["FileNamePattern"];
             //using (var client = new WebClient())
             //{
@@ -60,7 +89,7 @@ namespace TwicDownloader
             //        client.DownloadFile(downloadPath, filePath);
             //    }
             //}
-            for (var i = fromNumber; i <= toNumber; i++)
+            for (var i = Convert.ToInt32(fromNumber); i <= (string.IsNullOrWhiteSpace(toNumber)?5000:Convert.ToInt32(toNumber)); i++)
             {
                 var fileName = string.Format(filePattern, i);
                 var filePath = Path.Combine(folder, fileName);
@@ -78,15 +107,24 @@ namespace TwicDownloader
                             {
                                 await contentStream.CopyToAsync(stream);
                             }
+                            lastDownloadNumber = i.ToString();
+                        }
+                        else if (result.StatusCode == System.Net.HttpStatusCode.NotFound)
+                        {
+                            if (!string.IsNullOrWhiteSpace(toNumber) && toNumber != lastDownloadNumber)
+                            {
+                                _logger.Error($"Failed to download file {downloadPath}.");
+                            }
+                            else
+                                break;
                         }
                         else
-                        {
-                            _logger.Error($"Failed to download file {downloadPath}.{result.ReasonPhrase}.");
-                        }
+                            _logger.Error($"Failed to download file {downloadPath}.");
 
                     }
                 }
             }
+            return lastDownloadNumber;
         }
         static void Unzip(int fromNumber, int toNumber, string folder)
         {
@@ -120,6 +158,17 @@ namespace TwicDownloader
                     }
                 }
             }
+        }
+        static string GetNextSequenceNumber(string number)
+        {
+            int outNumber;
+            if (string.IsNullOrWhiteSpace(number))
+                throw new Exception("Sequence number cannot be empty.");
+            if (!int.TryParse(number, out outNumber))
+            {
+                throw new Exception($"Invalid sequence number {number}.");
+            }
+            return (++outNumber).ToString();
         }
     }
 }
