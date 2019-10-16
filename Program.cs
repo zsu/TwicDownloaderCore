@@ -57,6 +57,11 @@ namespace TwicDownloader
                     {
                         outputFile.WriteLine(toNumber);
                     }
+                    var targetFilePath = _configuration["TargetPgn"];
+                    if(!string.IsNullOrWhiteSpace(targetFilePath))
+                    {
+                        MergeToTarget(Path.Combine(Directory.GetCurrentDirectory(), "output.pgn"), targetFilePath);
+                    }
                     _logger.Info($"Download files from {fromNumber} to {toNumber} successfully.");
                 }
                 else
@@ -154,6 +159,30 @@ namespace TwicDownloader
                         while ((bytesRead = input.Read(buffer, 0, buffer.Length)) > 0)
                         {
                             output.Write(buffer, 0, bytesRead);
+                        }
+                    }
+                }
+            }
+        }
+        static void MergeToTarget(string inputFilePath,string targetFilePath)
+        {
+            int bufferSize =1024;
+            byte[] buffer = new byte[bufferSize];
+            using (FileStream output = new FileStream(targetFilePath,FileMode.Append,FileAccess.Write))
+            {
+                using (FileStream input = File.OpenRead(inputFilePath))
+                {
+                    for (; ; )
+                    {
+                        int n = input.Read(buffer, 0, buffer.Length);
+
+                        if (n > 0)
+                        {
+                            output.Write(buffer, 0, n);
+                        }
+                        else
+                        {
+                            break;
                         }
                     }
                 }
