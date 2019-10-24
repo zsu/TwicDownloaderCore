@@ -84,6 +84,7 @@ namespace TwicDownloader
         {
             string lastDownloadNumber = null;
             var filePattern = _configuration["FileNamePattern"];
+            var maxNotFoundTry= _configuration["MaxNotFoundTry"]??"10";
             //using (var client = new WebClient())
             //{
             //    for (var i = fromNumber; i <= toNumber; i++)
@@ -94,7 +95,7 @@ namespace TwicDownloader
             //        client.DownloadFile(downloadPath, filePath);
             //    }
             //}
-            for (var i = Convert.ToInt32(fromNumber); i <= (string.IsNullOrWhiteSpace(toNumber)?5000:Convert.ToInt32(toNumber)); i++)
+            for (var i = Convert.ToInt32(fromNumber); i <= (string.IsNullOrWhiteSpace(toNumber)?i+Convert.ToInt32(maxNotFoundTry):Convert.ToInt32(toNumber)); i++)
             {
                 var fileName = string.Format(filePattern, i);
                 var filePath = Path.Combine(folder, fileName);
