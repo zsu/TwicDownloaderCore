@@ -83,8 +83,9 @@ namespace TwicDownloader
         static async Task<string> Download(string url, string fromNumber, string toNumber, string folder)
         {
             string lastDownloadNumber = null;
+            int notFoundCount=0;
             var filePattern = _configuration["FileNamePattern"];
-            var maxNotFoundTry= _configuration["MaxNotFoundTry"]??"10";
+            var maxNotFoundTry= _configuration["MaxNotFoundTry"]??"3";
             //using (var client = new WebClient())
             //{
             //    for (var i = fromNumber; i <= toNumber; i++)
@@ -95,7 +96,7 @@ namespace TwicDownloader
             //        client.DownloadFile(downloadPath, filePath);
             //    }
             //}
-            for (var i = Convert.ToInt32(fromNumber); i <= (string.IsNullOrWhiteSpace(toNumber)?i+Convert.ToInt32(maxNotFoundTry):Convert.ToInt32(toNumber)); i++)
+            for (var i = Convert.ToInt32(fromNumber); i <= (string.IsNullOrWhiteSpace(toNumber)?5000:Convert.ToInt32(toNumber)); i++)
             {
                 var fileName = string.Format(filePattern, i);
                 var filePath = Path.Combine(folder, fileName);
@@ -114,14 +115,16 @@ namespace TwicDownloader
                                 await contentStream.CopyToAsync(stream);
                             }
                             lastDownloadNumber = i.ToString();
+                            notFoundCount = 0;
                         }
                         else if (result.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
+                            notFoundCount++;
                             if (!string.IsNullOrWhiteSpace(toNumber) && toNumber != lastDownloadNumber)
                             {
                                 _logger.Error($"Failed to download file {downloadPath}.");
                             }
-                            else
+                            else if (notFoundCount == Convert.ToInt32(maxNotFoundTry))
                                 break;
                         }
                         else
