@@ -13,6 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="publish\win10-x64\output.ini" />
+    <None Remove="publish\win10-x64\output.pgi" />
+    <None Remove="publish\win10-x64\output.pgn" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
