@@ -102,9 +102,12 @@ namespace TwicDownloader
                 var filePath = Path.Combine(folder, fileName);
                 var downloadPath = url.EndsWith("/") ? url + fileName : url + "/" + fileName;
                 var handler = new RedirectHandler(new HttpClientHandler());
+                //HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, downloadPath);
+                //requestMessage.Headers.Add("User-Agent", @"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0");             
                 using (var client = new System.Net.Http.HttpClient(handler))
                 {
                     client.Timeout = new TimeSpan(0, 30, 0);
+                    client.DefaultRequestHeaders.Add("User-Agent", @"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0");
                     using (var result = await client.GetAsync(downloadPath))
                     {
                         if (result.IsSuccessStatusCode)
