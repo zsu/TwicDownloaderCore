@@ -44,6 +44,10 @@ namespace TwicDownloader
             var tempFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             try
             {
+                if(File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "output.pgn")))
+                {
+                    File.Delete(Path.Combine(Directory.GetCurrentDirectory(), "output.pgn"));
+                }
                 _configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
                 Directory.CreateDirectory(tempFolder);
                 var task = Download(_configuration["Url"], fromNumber, toNumber, tempFolder);
