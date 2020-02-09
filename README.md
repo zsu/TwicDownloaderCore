@@ -6,8 +6,8 @@ Download and install .net core runtime for your OS here: https://dotnet.microsof
 
 # Usage
 Last update detection:
-1. Create a file last.txt with your last download twic number in it(Goto https://theweekinchess.com/twic find the number).
-2. Run TwicDownloader.exe and it will download all files starting from the last download number + 1; and the last.txt file will be automatically updated with the new last update number for next time use.
+1. Create a file last.txt with your last downloaded twic number in it(Goto https://theweekinchess.com/twic find the number).
+2. Run TwicDownloader.exe and it will download all files starting from the last downloaded number + 1; and the last.txt file will be automatically updated with the new last update number for next time use.
 3. An Output.pgn file is generated. You can append the games in this file into chessbase.
 
 Alternative:
