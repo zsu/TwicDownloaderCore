@@ -3,6 +3,7 @@ Download TWIC chess archives in batch. Work in windows/Unix/MacOS
 
 # Unix/MacOS
 Download and install .net core runtime for your OS here: https://dotnet.microsoft.com/download/dotnet-core/3.1;
+
 Publish it to your specific platform;
 
 # Usage
