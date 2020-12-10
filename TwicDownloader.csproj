@@ -8,10 +8,13 @@
 
   <ItemGroup>
     <Compile Remove="logs\**" />
+    <Compile Remove="publish\win-x64\logs\**" />
     <Compile Remove="publish\win10-x64\logs\**" />
     <EmbeddedResource Remove="logs\**" />
+    <EmbeddedResource Remove="publish\win-x64\logs\**" />
     <EmbeddedResource Remove="publish\win10-x64\logs\**" />
     <None Remove="logs\**" />
+    <None Remove="publish\win-x64\logs\**" />
     <None Remove="publish\win10-x64\logs\**" />
   </ItemGroup>
 
