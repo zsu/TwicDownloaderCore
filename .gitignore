@@ -2,7 +2,18 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/bin
-/obj
-/publish/win10-x64/logs
-/.vs/TwicDownloader
+[Bb]in/
+[Oo]bj
+[Rr]elease
+[Pp]ublishProfiles/
+[Bb]uild
+[Ll]ogs/
+.nuget/
+.vs/
+*.suo
+*.user
+*.vspscc
+*.log
+/publish/win-x64/output.pgn
+/publish/win-x64/output.pgi
+/publish/win-x64/output.ini
