@@ -64,7 +64,9 @@ namespace TwicDownloader
                     var targetFilePath = _configuration["TargetPgn"];
                     if(!string.IsNullOrWhiteSpace(targetFilePath))
                     {
-                        MergeToTarget(Path.Combine(Directory.GetCurrentDirectory(), "output.pgn"), targetFilePath);
+                        var input = Path.Combine(Directory.GetCurrentDirectory(), "output.pgn");
+                        if(File.Exists(input) && File.GetCreationTime(input).Date==DateTime.Today)
+                            MergeToTarget(input, targetFilePath);
                     }
                     _logger.Info($"Download files from {fromNumber} to {toNumber} successfully.");
                 }
