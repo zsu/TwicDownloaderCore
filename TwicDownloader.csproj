@@ -8,8 +8,11 @@
 
   <ItemGroup>
     <Compile Remove="logs\**" />
+    <Compile Remove="publish\**" />
     <EmbeddedResource Remove="logs\**" />
+    <EmbeddedResource Remove="publish\**" />
     <None Remove="logs\**" />
+    <None Remove="publish\**" />
   </ItemGroup>
 
   <ItemGroup>
