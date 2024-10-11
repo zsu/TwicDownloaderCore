@@ -8,6 +8,7 @@
 [Pp]ublishProfiles/
 [Bb]uild
 [Ll]ogs/
+[Pp]ublish/
 .nuget/
 .vs/
 *.suo
