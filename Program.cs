@@ -32,7 +32,7 @@ namespace TwicDownloader
                 }
                 else
                 {
-                    Console.WriteLine("Usage: dotnet TwicDownloader.dll fromNumber toNumber");
+                    Console.WriteLine("Usage: TwicDownloader fromNumber toNumber");
                     return;
                 }
             }
